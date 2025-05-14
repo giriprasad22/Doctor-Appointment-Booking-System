@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Home Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+        .profile {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .profile p {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .logout {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .section {
+            display: none;
+            margin-top: 20px;
+        }
+        .section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .section ul li {
+            background-color: #e0e0e0;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .textarea-container {
+            margin-top: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile">
+            <p><strong>Name:</strong> <span id="doctorName"></span></p>
+            <p><strong>Email:</strong> <span id="doctorEmail"></span></p>
+        </div>
+        <div class="logout">
+            <button onclick="logout()">Logout</button>
+        </div>
+        <div class="buttons">
+            <button id="viewPrescriptionBtn">View Prescription</button>
+            <button id="makePrescriptionBtn">Make Prescription</button>
+            <button id="confirmPatientBtn">Confirm Patients</button>
+            <button id="startMeetingBtn">Start Meeting</button>
+        </div>
+        <div class="section" id="viewPrescriptionSection">
+            <h3>Patient Prescriptions:</h3>
+            <ul id="prescriptionList"></ul>
+        </div>
+        <div class="section" id="makePrescriptionSection">
+            <h3>Make a Prescription:</h3>
+            <select id="patientSelect">
+                <option value="">-- Select Patient --</option>
+                <option value="Swetha">Swetha</option>
+                <option value="Harsha Vardhan">Harsha Vardhan</option>
+                <option value="Rohith">Rohith</option>
+            </select>
+            <div class="textarea-container" id="prescriptionTextarea" style="display: none;">
+                <textarea id="prescriptionText" placeholder="Enter prescription details..."></textarea>
+                <button onclick="savePrescription()">Save Prescription</button>
+            </div>
+        </div>
+        <div class="section" id="confirmPatientSection">
+            <h3>Patients Requesting for Appointment:</h3>
+            <ul id="confirmPatientList"></ul>
+        </div>
+        <div class="section" id="startMeetingSection">
+            <h3>Start Meeting:</h3>
+            <ul id="meetingList"></ul>
+        </div>
+    </div>
+    <script>
+        const patients = {
+            "Swetha": { prescription: "" },
+            "Harsha Vardhan": { prescription: "" },
+            "Rohith": { prescription: "" }
+        };
+        const requestingPatients = [
+            { name: "Harsha Vardhan", meetingTime: "5:00 PM" },
+            { name: "Rohith", meetingTime: "5:30 PM" }
+        ];
+        window.onload = function() {
+            const email = localStorage.getItem('doctorEmail') || "doctor@example.com";
+            const firstName = email.split('@')[0]; 
+            document.getElementById('doctorName').textContent = firstName;
+            document.getElementById('doctorEmail').textContent = email;
+        };
+        function logout() {
+            localStorage.removeItem('doctorEmail');
+            window.location.href = "index.html";
+        }
+        function hideAllSections() {
+            document.getElementById("viewPrescriptionSection").style.display = "none";
+            document.getElementById("makePrescriptionSection").style.display = "none";
+            document.getElementById("confirmPatientSection").style.display = "none";
+            document.getElementById("startMeetingSection").style.display = "none";
+        }
+        document.getElementById("viewPrescriptionBtn").addEventListener("click", function() {
+            hideAllSections();
+            const prescriptionList = document.getElementById("prescriptionList");
+            prescriptionList.innerHTML = '';
+            for (let patient in patients) {
+                const li = document.createElement('li');
+                li.textContent = `${patient}: ${patients[patient].prescription || 'No prescription yet'}`;
+                prescriptionList.appendChild(li);
+            }
+            document.getElementById("viewPrescriptionSection").style.display = "block";
+        });
+        document.getElementById("makePrescriptionBtn").addEventListener("click", function() {
+            hideAllSections();
+            document.getElementById("makePrescriptionSection").style.display = "block";
+        });
+        document.getElementById("patientSelect").addEventListener("change", function() {
+            const selectedPatient = this.value;
+            if (selectedPatient) {
+                document.getElementById("prescriptionTextarea").style.display = "block";
+            } else {
+                document.getElementById("prescriptionTextarea").style.display = "none";
+            }
+        });
+        function savePrescription() {
+            const selectedPatient = document.getElementById("patientSelect").value;
+            const prescriptionText = document.getElementById("prescriptionText").value;
+            if (selectedPatient && prescriptionText) {
+                patients[selectedPatient].prescription = prescriptionText;
+                alert("Prescription saved for " + selectedPatient);
+                document.getElementById("prescriptionText").value = ''; // Clear textarea
+            } else {
+                alert("Please select a patient and enter a prescription.");
+            }
+        }
+        document.getElementById("confirmPatientBtn").addEventListener("click", function() {
+            hideAllSections();
+            const confirmPatientList = document.getElementById("confirmPatientList");
+            confirmPatientList.innerHTML = '';
+            requestingPatients.forEach(patient => {
+                const li = document.createElement('li');
+                li.innerHTML = `${patient.name} requests an appointment
+                    <button onclick="confirmPatient('${patient.name}')">Confirm</button>`;
+                confirmPatientList.appendChild(li);
+            });
+            document.getElementById("confirmPatientSection").style.display = "block";
+        });
+        function confirmPatient(patientName) {
+            alert(`${patientName} confirmed for appointment`);
+        }
+        document.getElementById("startMeetingBtn").addEventListener("click", function() {
+            hideAllSections();
+            const meetingList = document.getElementById("meetingList");
+            meetingList.innerHTML = '';
+            requestingPatients.forEach(patient => {
+                const li = document.createElement('li');
+                li.innerHTML = `${patient.name} - Meeting at: ${patient.meetingTime} 
+                    <button onclick="startMeeting('${patient.name}')">Start Meeting</button>`;
+                meetingList.appendChild(li);
+            });
+            document.getElementById("startMeetingSection").style.display = "block";
+        });
+        function startMeeting(patientName) {
+            alert(`Starting meeting with ${patientName}`);
+        }
+    </script>
+</body>
+</html>
