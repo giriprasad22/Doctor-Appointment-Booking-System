@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Registration</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Patient Registration</h1>
+        </header>
+        <main>
+            <form onsubmit="registerPatient(event)">
+                <div class="form-group">
+                    <label for="registerEmail">Email:</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password:</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <button type="submit" class="submit-btn">Register</button>
+            </form>
+        </main>
+    </div>
+    <script>
+        function registerPatient(event) {
+            event.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            localStorage.setItem('patientEmail', email);
+            localStorage.setItem('patientPassword', password);
+            alert("Registration successful! You can now log in.");
+            window.location.href = "index.html"; 
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Home</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="patient-container">
+        <header class="patient-header">
+            <h1>Welcome, <span id="patientName"></span></h1>
+            <div class="profile-section">
+                <span id="profileDetails"></span>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </header>
+        <main>
+            <nav class="patient-nav">
+                <button onclick="showDoctorList()">Doctors</button>
+                <button onclick="showPreviousAppointments()">Previous Appointments</button>
+                <button onclick="showMakeAppointment()">Make Appointment</button>
+                <button onclick="showViewAppointment()">View Appointment</button>
+                <button onclick="showMakePayment()">Make Payment</button>
+            </nav>
+            <section id="doctorList" class="hidden">
+                <h2>Available Doctors</h2>
+                <ul id="doctorListItems"> </ul>
+            </section>
+            <section id="previousAppointments" class="hidden">
+                <h2>Previous Appointments</h2>
+                <ul id="previousAppointmentsList"></ul>
+            </section>
+            <section id="makeAppointment" class="hidden">
+                <h2>Make Appointment</h2>
+                <form onsubmit="bookAppointment(event)">
+                    <div class="form-group">
+                        <label for="appointmentDoctor">Select Doctor:</label>
+                        <select id="appointmentDoctor" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime">Select Time:</label>
+                        <input type="datetime-local" id="appointmentTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentProblem">Problem:</label>
+                        <textarea id="appointmentProblem" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Book Appointment</button>
+                </form>
+            </section>
+            <section id="viewAppointment" class="hidden">
+                <h2>Current Appointments</h2>
+                <ul id="currentAppointmentList"></ul>
+            </section>
+            <section id="cancelAppointment" class="hidden">
+                <h2>Cancel Appointment</h2>
+                <ul id="cancelAppointmentList"></ul>
+            </section>
+          <section id="makePayment" class="hidden">
+                <h2>Make Payment</h2>
+                <p>Scan the QR code to pay ₹10</p>
+                <ul id="paymentList" class="payment-list"></ul>
+            </section>
+        </main>
+    </div>
+    <script>
+        function registerPatient(event) {
+            event.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value; 
+            localStorage.setItem('patientEmail', email);
+            localStorage.setItem('patientPassword', password);
+            alert("Registration successful! You can now log in.");
+            window.location.href = "index.html"; 
+        }
+        const doctors = [
+    {
+        name: "Dr. Chidvilasini",
+        specialization: "Cardiology",
+        availableTimes: ["5:00PM", "6:00PM"],
+        experience: "15 years",
+        qualifications: "MBBS, MD (Cardiology)",
+        languages: ["English", "Hindi", "Telugu"]
+    },
+    {
+        name: "Dr. Giri Prasad",
+        specialization: "Dermatology",
+        availableTimes: ["5:00PM", "6:00PM"],
+        experience: "12 years",
+        qualifications: "MBBS, MD (Dermatology)",
+        languages: ["English", "Telugu"]
+    },
+    {
+        name: "Dr. Jahnavi",
+        specialization: "Dentist",
+        availableTimes: ["5:00PM", "6:00PM"],
+        experience: "5 years",
+        qualifications: "BDS",
+        languages: ["English", "Hindi", "Telugu"]
+    },
+    {
+        name: "Dr.Raghu",
+        specialization: "Nephrology",
+        availableTimes: ["5:00PM", "6:00PM"],
+        experience: "12 years",
+        qualifications: "MBBS, MD (Nephrology)",
+        languages: ["English", "Telugu"]
+    }
+];
+        const appointments = [];
+        const cancelledAppointments = [];
+
+        window.onload = function() {
+            const email = localStorage.getItem('patientEmail');
+            const name = email.split('@')[0]; 
+            document.getElementById('patientName').textContent = name;
+            document.getElementById('profileDetails').textContent = email;
+            const doctorSelect = document.getElementById('appointmentDoctor');
+            doctors.forEach((doctor) => {
+                const option = document.createElement('option');
+                option.value = doctor.name;
+                option.textContent = `${doctor.name} - ${doctor.specialization}`;
+                doctorSelect.appendChild(option);
+            });
+        };
+        function logout() {
+            localStorage.removeItem('patientEmail');
+            localStorage.removeItem('patientPassword');
+            window.location.href = "index.html"; 
+        }
+        function showDoctorList() {
+    document.getElementById('doctorList').classList.remove('hidden');
+    document.getElementById('previousAppointments').classList.add('hidden');
+    document.getElementById('makeAppointment').classList.add('hidden');
+    document.getElementById('viewAppointment').classList.add('hidden');
+    document.getElementById('makePayment').classList.add('hidden');
+    const doctorListItems = document.getElementById('doctorListItems');
+    doctorListItems.innerHTML = ''; 
+    doctors.forEach(doctor => {
+        const doctorCard = document.createElement('li');
+        doctorCard.className = 'doctor-card';
+        doctorCard.innerHTML = `
+            <div class="doctor-info">
+                <h3>${doctor.name}</h3>
+                <p><strong>Specialization:</strong> ${doctor.specialization}</p>
+                <p><strong>Available Times:</strong></p>
+                <ul class="time-slots">
+                    ${doctor.availableTimes.map(time => `<li>${time}</li>`).join('')}
+                </ul>
+                <button onclick="selectDoctor('${doctor.name}')" class="book-btn">Book Appointment</button>
+            </div>
+        `;
+        doctorListItems.appendChild(doctorCard);
+    });
+}
+function selectDoctor(doctorName) {
+    document.getElementById('appointmentDoctor').value = doctorName;
+    showMakeAppointment();
+}
+        function showPreviousAppointments() {
+            document.getElementById('previousAppointments').classList.remove('hidden');
+            document.getElementById('doctorList').classList.add('hidden');
+            document.getElementById('makeAppointment').classList.add('hidden');
+            document.getElementById('viewAppointment').classList.add('hidden');
+            document.getElementById('makePayment').classList.add('hidden');
+            const previousAppointmentsList = document.getElementById('previousAppointmentsList');
+            previousAppointmentsList.innerHTML = ''; 
+            if (appointments.length === 0) {
+                previousAppointmentsList.innerHTML = '<li>No previous appointments found.</li>';
+            } else {
+                appointments.forEach(appointment => {
+                    const li = document.createElement('li');
+                    li.textContent = `${appointment.doctor} - ${appointment.time}: ${appointment.problem}`;
+                    previousAppointmentsList.appendChild(li);
+                });
+            }
+        }
+        function showMakeAppointment() {
+            document.getElementById('makeAppointment').classList.remove('hidden');
+            document.getElementById('doctorList').classList.add('hidden');
+            document.getElementById('previousAppointments').classList.add('hidden');
+            document.getElementById('viewAppointment').classList.add('hidden');
+            document.getElementById('makePayment').classList.add('hidden');
+        }
+        function bookAppointment(event) {
+            event.preventDefault();
+            const doctor = document.getElementById('appointmentDoctor').value;
+            const time = document.getElementById('appointmentTime').value;
+            const problem = document.getElementById('appointmentProblem').value;
+            const appointment = { doctor, time, problem, status: 'Pending' };
+            appointments.push(appointment);
+            alert("Appointment booked successfully!");
+            showViewAppointment();
+        }
+        function showViewAppointment() {
+            document.getElementById('viewAppointment').classList.remove('hidden');
+            document.getElementById('doctorList').classList.add('hidden');
+            document.getElementById('previousAppointments').classList.add('hidden');
+            document.getElementById('makeAppointment').classList.add('hidden');
+            document.getElementById('makePayment').classList.add('hidden');
+            const currentAppointmentList = document.getElementById('currentAppointmentList');
+            currentAppointmentList.innerHTML = ''; 
+            if (appointments.length === 0) {
+                currentAppointmentList.innerHTML = '<li>No current appointments.</li>';
+            } else {
+                appointments.forEach((appointment, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${appointment.doctor} - ${appointment.time}: ${appointment.problem} (Status: ${appointment.status})`;
+                    const cancelButton = document.createElement('button');
+                    cancelButton.textContent = 'Cancel';
+                    cancelButton.onclick = function() {
+                        cancelAppointment(index);
+                    };
+                    li.appendChild(cancelButton);
+                    currentAppointmentList.appendChild(li);
+                });
+            }
+        }
+        function cancelAppointment(index) {
+            const cancelledAppointment = appointments.splice(index, 1)[0];
+            cancelledAppointments.push({ ...cancelledAppointment, status: 'Cancelled' });
+            alert("Appointment cancelled successfully!");
+            showViewAppointment();
+            showPreviousAppointments();
+        }
+
+        function showMakePayment() {
+    document.getElementById('makePayment').classList.remove('hidden');
+    document.getElementById('doctorList').classList.add('hidden');
+    document.getElementById('previousAppointments').classList.add('hidden');
+    document.getElementById('makeAppointment').classList.add('hidden');
+    document.getElementById('viewAppointment').classList.add('hidden');
+
+    const paymentList = document.getElementById('paymentList');
+    paymentList.innerHTML = '';
+
+    if (appointments.length === 0) {
+        paymentList.innerHTML = '<li>No appointments available for payment.</li>';
+    } else {
+        appointments.forEach((appointment, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="payment-item">
+                    <p>${appointment.doctor} - ${appointment.time}: ₹10 (Status: ${appointment.status})</p>
+                    <div class="qr-section">
+                        <img src="WhatsApp Image 2024-10-25 at 21.29.38_2baece1c.jpg" alt="Payment QR Code" class="qr-code">
+                        <button onclick="confirmPayment(${index})" class="pay-button" 
+                            ${appointment.status === 'Confirmed' ? 'disabled' : ''}>
+                            ${appointment.status === 'Confirmed' ? 'Payment Completed' : 'Confirm Payment'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            paymentList.appendChild(li);
+        });
+    }
+}
+
+function confirmPayment(index) {
+    appointments[index].status = 'Confirmed';
+    alert("Payment successful! Appointment confirmed.");
+    showMakePayment(); 
+}
+    </script>
+</body>
+</html>
