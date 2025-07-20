@@ -40,9 +40,8 @@ Backend: (To be implemented - suggest Node.js/Flask)
 Database: (To be implemented - suggest Firebase/MySQL)
 
 
-Screenshots
-
-https://WhatsApp%2520Image%25202024-10-25%2520at%252021...
+## Screenshots
+Upload your Screenshots of your QR code for payment in file with same name
 
 ## Future Improvements
 Add backend functionality
