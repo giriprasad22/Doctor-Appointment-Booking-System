@@ -20,26 +20,36 @@ A web-based platform for patients to book appointments with doctors, with separa
 
 ## Setup
 1. Clone the repository:
-```bash
+   
+bash
+
 git clone https://github.com/giriprasad22/Doctor-Appointment-Booking-System.git
 
 
-Open in browser:
+2. Open in browser:
+   
 bash
+
 open index.html  # Or double-click the file
 
-Technologies Used
+## Technologies Used
 Frontend: HTML5, CSS3, JavaScript
+
 Backend: (To be implemented - suggest Node.js/Flask)
+
 Database: (To be implemented - suggest Firebase/MySQL)
 
+
 Screenshots
+
 https://WhatsApp%2520Image%25202024-10-25%2520at%252021...
 
-Future Improvements
+## Future Improvements
 Add backend functionality
+
 Implement real-time notifications
+
 Add payment integration
 
-License
+## License
 This project is unlicensed - free for personal use.
