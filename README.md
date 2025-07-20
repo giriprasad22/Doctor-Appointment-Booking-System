@@ -5,4 +5,41 @@ A clean and interactive frontend project to simplify doctor appointments online.
 ________________________________________
 📌 Project Overview
 This Doctor Appointment Web App allows three types of users — Patients, Doctors, and Admins — to interact through a clean, intuitive web interface. Built entirely using HTML, CSS, and JavaScript, this frontend-only system simulates login portals, registration forms, and user dashboards for each role.
-tients
+
+A web-based platform for patients to book appointments with doctors, with separate interfaces for patients, doctors, and administrators.
+
+
+
+## Features
+- **Three User Roles**:
+  - Patients: Book/cancel appointments
+  - Doctors: Manage availability/appointments
+  - Administrators: Manage system users
+- **Responsive Design**: Works on desktop and mobile
+- **Secure Authentication**: Separate login for each role
+
+## Setup
+1. Clone the repository:
+```bash
+git clone https://github.com/giriprasad22/Doctor-Appointment-Booking-System.git
+
+
+Open in browser:
+bash
+open index.html  # Or double-click the file
+
+Technologies Used
+Frontend: HTML5, CSS3, JavaScript
+Backend: (To be implemented - suggest Node.js/Flask)
+Database: (To be implemented - suggest Firebase/MySQL)
+
+Screenshots
+https://WhatsApp%2520Image%25202024-10-25%2520at%252021...
+
+Future Improvements
+Add backend functionality
+Implement real-time notifications
+Add payment integration
+
+License
+This project is unlicensed - free for personal use.
